@@ -1,5 +1,5 @@
+import { ConvexProvider, ConvexReactClient } from "convex/react"
 import { useState } from "react"
-import "./App.css"
 
 type View =
 	| { type: "initial" }
@@ -14,7 +14,17 @@ type ESixPost = {
 	}
 }
 
+const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL)
+
 function App() {
+	return (
+		<ConvexProvider client={convex}>
+			<Game />
+		</ConvexProvider>
+	)
+}
+
+function Game() {
 	const [view, setView] = useState<View>({ type: "initial" })
 
 	const getRandomThing = async () => {
