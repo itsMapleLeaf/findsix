@@ -2,7 +2,7 @@ import { type } from "arktype"
 import { v } from "convex/values"
 import { mapValues } from "es-toolkit"
 import { adjective, animal, color, spaceSlug } from "space-slug"
-import { internal, api } from "./_generated/api.js"
+import { api, internal } from "./_generated/api.js"
 import {
 	action,
 	internalMutation,
@@ -162,7 +162,7 @@ export const guessImage = mutation({
 		})
 		player.lastActiveTime = Date.now()
 
-		if (player.state === "playing") {
+		if (player.state === "playing" || player.state === "incorrect") {
 			if (args.imageId === room.image?.id) {
 				player.state = "found"
 				player.score++
