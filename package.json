@@ -9,7 +9,8 @@
 		"dev:convex": "convex dev --tail-logs",
 		"build": "tsc -b && vite build",
 		"lint": "eslint .",
-		"preview": "vite preview"
+		"preview": "vite preview",
+		"predeploy": "convex deploy --cmd 'bun run build' --cmd-url-env-var-name VITE_CONVEX_URL"
 	},
 	"dependencies": {
 		"@ariakit/react": "^0.4.17",
