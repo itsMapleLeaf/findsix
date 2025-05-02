@@ -32,17 +32,37 @@ function App() {
 
 function CreateRoomPage() {
 	const createRoom = useMutation(api.rooms.create)
+	const [useAdultContent, setUseAdultContent] = useState(false)
+
 	return (
-		<>
+		<div className="flex flex-col items-center justify-center min-h-dvh bg-gray-950 p-4 gap-4">
+			<h1 className="text-3xl font-light text-white">findsix</h1>
+
 			<Button
 				onClick={async () => {
-					const result = await createRoom()
+					const result = await createRoom({ useAdultContent })
 					navigate(`/play/${result.slug}`)
 				}}
 			>
-				new room
+				create room
 			</Button>
-		</>
+
+			<div className="flex items-center gap-2 mb-4">
+				<input
+					type="checkbox"
+					id="useAdultContent"
+					checked={useAdultContent}
+					onChange={(e) => setUseAdultContent(e.target.checked)}
+					className="size-4 peer accent-pink-300"
+				/>
+				<label
+					htmlFor="useAdultContent"
+					className="text-gray-400 peer-checked:text-pink-300"
+				>
+					e621 mode (18+ content)
+				</label>
+			</div>
+		</div>
 	)
 }
 
@@ -89,7 +109,7 @@ function RoomPage({ slug }: { slug: string }) {
 			const query = fd.get("query") as string
 
 			const response = await fetch(
-				`https://e926.net/posts.json?limit=320&tags=${query}`,
+				`https://${room.domain}/posts.json?limit=320&tags=${query}`,
 			)
 
 			await guessTags({
@@ -239,6 +259,7 @@ function RoomPage({ slug }: { slug: string }) {
 							name="query"
 							required
 							defaultValue={searchState.query}
+							domain={room.domain}
 							className="flex-1"
 						/>
 						<Button type="submit" disabled={searchPending}>
@@ -320,8 +341,9 @@ function useDebouncedValue<T>(value: T, delay: number) {
 
 function TagSearchInput({
 	defaultValue,
+	domain = "e926.net",
 	...props
-}: ComponentProps<typeof Ariakit.Combobox>) {
+}: ComponentProps<typeof Ariakit.Combobox> & { domain?: string }) {
 	const [input, setInput] = useState(String(defaultValue ?? ""))
 	const debouncedInput = useDebouncedValue(input, 500)
 	const [tags, setTags] = useState<TagAutocompleteItem[]>([])
@@ -337,7 +359,7 @@ function TagSearchInput({
 
 		void (async () => {
 			const res = await fetch(
-				`https://e926.net/tags/autocomplete.json?search%5Bname_matches%5D=${lastWord}&expiry=7`,
+				`https://${domain}/tags/autocomplete.json?search%5Bname_matches%5D=${lastWord}&expiry=7`,
 				{
 					signal: controller.signal,
 				},
@@ -354,7 +376,7 @@ function TagSearchInput({
 		return () => {
 			controller.abort()
 		}
-	}, [debouncedInput])
+	}, [debouncedInput, domain])
 
 	return (
 		<Ariakit.ComboboxProvider

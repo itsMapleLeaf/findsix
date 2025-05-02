@@ -2,7 +2,7 @@ import { type } from "arktype"
 import { v } from "convex/values"
 import { mapValues } from "es-toolkit"
 import { adjective, animal, color, spaceSlug } from "space-slug"
-import { internal } from "./_generated/api.js"
+import { internal, api } from "./_generated/api.js"
 import {
 	action,
 	internalMutation,
@@ -24,13 +24,26 @@ export const get = query({
 	},
 })
 
+export const getById = query({
+	args: {
+		roomId: v.id("rooms"),
+	},
+	async handler(ctx, args) {
+		return await ctx.db.get(args.roomId)
+	},
+})
+
 export const create = mutation({
-	args: {},
-	async handler(ctx) {
+	args: {
+		useAdultContent: v.optional(v.boolean()),
+	},
+	async handler(ctx, args) {
 		const slug = spaceSlug([adjective(), color(), animal()])
+		const domain = args.useAdultContent ? "e621.net" : "e926.net"
 
 		await ctx.db.insert("rooms", {
 			slug,
+			domain,
 			players: {},
 			image: null,
 		})
@@ -70,6 +83,11 @@ export const fetchNewImage = action({
 		roomId: v.id("rooms"),
 	},
 	async handler(ctx, args) {
+		const room = await ctx.runQuery(api.rooms.getById, { roomId: args.roomId })
+		if (!room) {
+			throw new Error("room not found")
+		}
+
 		const PostsResponse = type({
 			posts: type({
 				id: type("number").pipe(String),
@@ -81,7 +99,7 @@ export const fetchNewImage = action({
 		})
 
 		const image = await fetch(
-			"https://e926.net/posts.json?limit=1&tags=order:random+~type:png+~type:jpg",
+			`https://${room.domain}/posts.json?limit=1&tags=order:random+~type:png+~type:jpg`,
 		)
 		const result = PostsResponse(await image.json())
 		if (result instanceof type.errors) {

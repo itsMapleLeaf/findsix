@@ -10,6 +10,7 @@ export const roomImageValidator = v.object({
 export default defineSchema({
 	rooms: defineTable({
 		slug: v.string(),
+		domain: v.string(),
 		image: v.union(v.null(), roomImageValidator),
 		players: v.record(
 			v.string(),
