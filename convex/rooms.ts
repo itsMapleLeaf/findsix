@@ -211,7 +211,9 @@ export const guessTags = mutation({
 			player.tagMatches = {
 				...player.tagMatches,
 				...Object.fromEntries(
-					args.tags.map((tag) => [tag, image.tags.includes(tag)]),
+					args.tags
+						.filter((tag) => /^[a-z1-9][a-z1-9-_]*$/.test(tag))
+						.map((tag) => [tag, image.tags.includes(tag)]),
 				),
 			}
 		}
