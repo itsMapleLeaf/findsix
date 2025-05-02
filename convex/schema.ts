@@ -16,6 +16,8 @@ export default defineSchema({
 			v.object({
 				score: v.number(),
 				lastActiveTime: v.number(),
+				startTime: v.optional(v.number()),
+				foundTime: v.optional(v.number()),
 				state: v.union(
 					v.literal("playing"),
 					v.literal("found"),

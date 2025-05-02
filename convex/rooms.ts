@@ -109,12 +109,15 @@ export const setNextImage = internalMutation({
 		if (!room) {
 			throw new Error("room not found")
 		}
+		const now = Date.now()
 		await ctx.db.patch(args.roomId, {
 			image: args.image,
 			players: mapValues(room.players, (player) => ({
 				...player,
 				state: "playing" as const,
 				tagMatches: {},
+				startTime: now,
+				foundTime: undefined,
 			})),
 		})
 	},
@@ -145,6 +148,7 @@ export const guessImage = mutation({
 			if (args.imageId === room.image?.id) {
 				player.state = "found"
 				player.score++
+				player.foundTime = Date.now()
 			} else {
 				player.state = "incorrect"
 			}

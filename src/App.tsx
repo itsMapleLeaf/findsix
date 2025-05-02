@@ -7,6 +7,7 @@ import {
 	useMutation,
 	useQuery,
 } from "convex/react"
+import prettyMs from "pretty-ms"
 import { useActionState, useEffect, useState, type ComponentProps } from "react"
 import { Route, Switch } from "wouter"
 import { navigate } from "wouter/use-browser-location"
@@ -210,7 +211,14 @@ function RoomPage({ slug }: { slug: string }) {
 				</Button>
 
 				{player.state === "found" ? (
-					<p>u did it :)</p>
+					<p>
+						u did it :)
+						{player.foundTime && player.startTime && (
+							<span className="block text-gray-400">
+								(found in {prettyMs(player.foundTime - player.startTime)})
+							</span>
+						)}
+					</p>
 				) : player.state === "incorrect" ? (
 					<p>lol no try again</p>
 				) : null}
@@ -218,9 +226,20 @@ function RoomPage({ slug }: { slug: string }) {
 				<div className="h-px bg-gray-800" />
 
 				<ul>
-					{Object.entries(room.players).map(([name, player]) => (
-						<p key={name}>
-							{name}: {player.score} ({player.state})
+					{Object.entries(room.players).map(([playerName, player]) => (
+						<p key={playerName}>
+							{playerName}: {player.score}{" "}
+							<span className="text-gray-400">
+								{player.state === "found" &&
+								player.foundTime &&
+								player.startTime ? (
+									<>
+										(found in {prettyMs(player.foundTime - player.startTime)})
+									</>
+								) : (
+									`(${player.state})`
+								)}
+							</span>
 						</p>
 					))}
 				</ul>
