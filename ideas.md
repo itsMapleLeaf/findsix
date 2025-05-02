@@ -1,0 +1,2 @@
+- larger image preview on hover
+- tag search
