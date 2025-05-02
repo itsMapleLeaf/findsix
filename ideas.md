@@ -1,2 +1,2 @@
 - larger image preview on hover
-- tag search
+- show players' time they found the image

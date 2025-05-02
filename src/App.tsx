@@ -1,3 +1,4 @@
+import * as Ariakit from "@ariakit/react"
 import { type } from "arktype"
 import {
 	ConvexProvider,
@@ -6,7 +7,7 @@ import {
 	useMutation,
 	useQuery,
 } from "convex/react"
-import { useActionState, useState, type ComponentProps } from "react"
+import { useActionState, useEffect, useState, type ComponentProps } from "react"
 import { Route, Switch } from "wouter"
 import { navigate } from "wouter/use-browser-location"
 import { api } from "../convex/_generated/api.js"
@@ -193,14 +194,6 @@ function RoomPage({ slug }: { slug: string }) {
 	return (
 		<main className="flex min-h-dvh bg-gray-950 px-4 gap-4 items-start">
 			<section className="flex flex-col gap-2 w-80 sticky top-0 py-4">
-				<ul>
-					{Object.entries(room.players).map(([name, player]) => (
-						<p key={name}>
-							{name}: {player.score} ({player.state})
-						</p>
-					))}
-				</ul>
-
 				{room.image && (
 					<a href={room.image.url} target="_blank" rel="noreferrer">
 						<img src={room.image.url} alt="" className="rounded-lg" />
@@ -221,12 +214,22 @@ function RoomPage({ slug }: { slug: string }) {
 				) : player.state === "incorrect" ? (
 					<p>lol no try again</p>
 				) : null}
+
+				<div className="h-px bg-gray-800" />
+
+				<ul>
+					{Object.entries(room.players).map(([name, player]) => (
+						<p key={name}>
+							{name}: {player.score} ({player.state})
+						</p>
+					))}
+				</ul>
 			</section>
 
 			<section className="flex-1 flex flex-col gap-2">
 				<header className="sticky top-0 bg-gray-950 py-4">
 					<form action={submitSearch} className="flex gap-2">
-						<input
+						<TagSearchInput
 							name="query"
 							required
 							defaultValue={searchState.query}
@@ -282,6 +285,100 @@ function RoomPage({ slug }: { slug: string }) {
 				</section>
 			</section>
 		</main>
+	)
+}
+
+type TagAutocompleteItem = {
+	id: number
+	name: string
+	post_count: number
+	category: number
+	antecedent_name: string | null
+}
+
+function useDebouncedValue<T>(value: T, delay: number) {
+	const [debouncedValue, setDebouncedValue] = useState<T>(value)
+
+	useEffect(() => {
+		const timeout = setTimeout(() => {
+			setDebouncedValue(value)
+		}, delay)
+
+		return () => {
+			clearTimeout(timeout)
+		}
+	}, [value, delay])
+
+	return debouncedValue
+}
+
+function TagSearchInput({
+	defaultValue,
+	...props
+}: ComponentProps<typeof Ariakit.Combobox>) {
+	const [input, setInput] = useState(String(defaultValue ?? ""))
+	const debouncedInput = useDebouncedValue(input, 500)
+	const [tags, setTags] = useState<TagAutocompleteItem[]>([])
+
+	useEffect(() => {
+		if (/\s+$/.test(debouncedInput)) return
+
+		const lastWord = debouncedInput.split(/\s+/).at(-1)
+		if (!lastWord) return
+
+		const controller = new AbortController()
+
+		void (async () => {
+			const res = await fetch(
+				`https://e926.net/tags/autocomplete.json?search%5Bname_matches%5D=${lastWord}&expiry=7`,
+				{
+					signal: controller.signal,
+				},
+			)
+			if (!res.ok) {
+				console.error("failed to fetch tags")
+				setTags([])
+				return
+			}
+			const data = (await res.json()) as TagAutocompleteItem[]
+			setTags(data)
+		})()
+
+		return () => {
+			controller.abort()
+		}
+	}, [debouncedInput])
+
+	return (
+		<Ariakit.ComboboxProvider
+			value={input}
+			setValue={(value) => {
+				// console.log(value)
+				setInput(value)
+			}}
+		>
+			<Ariakit.ComboboxLabel className="sr-only">Search</Ariakit.ComboboxLabel>
+			<Ariakit.Combobox {...props} />
+			<Ariakit.ComboboxPopover
+				gutter={4}
+				className="bg-gray-900 border-gray-700 border rounded p-1 flex flex-col gap-1 min-w-64 empty:hidden"
+			>
+				{input !== debouncedInput || /\s+$/.test(input)
+					? null
+					: tags.map((tag) => (
+							<Ariakit.ComboboxItem
+								key={tag.id}
+								value={[
+									...input.trim().split(/(\s+)/).slice(0, -1),
+									tag.name,
+								].join("")}
+								className="px-2 py-1.5 hover:bg-gray-800 transition cursor-default data-focus-visible:bg-gray-800 rounded"
+							>
+								{tag.name}
+							</Ariakit.ComboboxItem>
+						))}
+			</Ariakit.ComboboxPopover>
+		</Ariakit.ComboboxProvider>
 	)
 }
 

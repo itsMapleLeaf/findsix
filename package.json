@@ -12,6 +12,7 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
+		"@ariakit/react": "^0.4.17",
 		"@iconify/react": "^6.0.0",
 		"@tailwindcss/vite": "^4.1.5",
 		"arktype": "^2.1.20",
