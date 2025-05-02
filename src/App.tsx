@@ -13,19 +13,6 @@ import { Route, Switch } from "wouter"
 import { navigate } from "wouter/use-browser-location"
 import { api } from "../convex/_generated/api.js"
 
-type View =
-	| { type: "initial" }
-	| { type: "findIt"; post: ESixPost }
-	| { type: "wrong"; post: ESixPost }
-	| { type: "right"; post: ESixPost }
-
-type ESixPost = {
-	id: number
-	sample: {
-		url: string
-	}
-}
-
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL)
 
 function App() {
