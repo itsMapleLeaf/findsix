@@ -9,7 +9,7 @@ type View =
 
 type ESixPost = {
 	id: number
-	file: {
+	sample: {
 		url: string
 	}
 }
@@ -58,7 +58,7 @@ function App() {
 
 		return (
 			<>
-				<img src={view.post.file.url} alt="" />
+				<img src={view.post.sample.url} alt="" />
 				<p>now go find it you bitch</p>
 				<form action={handleIt}>
 					<input name="foundId" placeholder="what is" />
