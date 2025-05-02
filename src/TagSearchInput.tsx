@@ -1,5 +1,6 @@
 import * as Ariakit from "@ariakit/react"
 import { type ComponentProps, useEffect, useState } from "react"
+import { twMerge } from "tailwind-merge"
 import { useDebouncedValue } from "./useDebouncedValue.tsx"
 
 type TagAutocompleteItem = {
@@ -59,6 +60,10 @@ export function TagSearchInput({
 			<Ariakit.ComboboxLabel className="sr-only">Search</Ariakit.ComboboxLabel>
 			<Ariakit.Combobox
 				{...props}
+				className={twMerge(
+					"bg-gray-900 text-white p-2 rounded border border-gray-800 focus:border-pink-700 focus:outline-none",
+					props.className,
+				)}
 				onKeyDown={(event) => {
 					if (event.key === "Enter") {
 						setOpen(false)
@@ -74,10 +79,12 @@ export function TagSearchInput({
 					: tags.map((tag) => (
 							<Ariakit.ComboboxItem
 								key={tag.id}
-								value={[
-									...input.trim().split(/(\s+)/).slice(0, -1),
-									tag.name,
-								].join("")}
+								value={
+									// when selected, this option will prefill the current input, the last tag autocompleted, then a space at the end for easily typing the next one
+									[...input.trim().split(/(\s+)/).slice(0, -1), tag.name].join(
+										"",
+									) + " "
+								}
 								className="px-2 py-1.5 hover:bg-gray-800 transition cursor-default data-focus-visible:bg-gray-800 rounded"
 							>
 								{tag.name}

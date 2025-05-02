@@ -140,7 +140,7 @@ export function RoomPage({ slug }: { slug: string }) {
 			<section className="flex flex-col gap-2 w-80 sticky top-0 py-4">
 				{room.image && (
 					<a href={room.image.url} target="_blank" rel="noreferrer">
-						<img src={room.image.url} alt="" className="rounded-lg" />
+						<img src={room.image.url} alt="" className="rounded" />
 					</a>
 				)}
 
