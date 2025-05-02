@@ -325,6 +325,7 @@ function TagSearchInput({
 	const [input, setInput] = useState(String(defaultValue ?? ""))
 	const debouncedInput = useDebouncedValue(input, 500)
 	const [tags, setTags] = useState<TagAutocompleteItem[]>([])
+	const [open, setOpen] = useState(false)
 
 	useEffect(() => {
 		if (/\s+$/.test(debouncedInput)) return
@@ -357,14 +358,20 @@ function TagSearchInput({
 
 	return (
 		<Ariakit.ComboboxProvider
+			open={open}
+			setOpen={setOpen}
 			value={input}
-			setValue={(value) => {
-				// console.log(value)
-				setInput(value)
-			}}
+			setValue={setInput}
 		>
 			<Ariakit.ComboboxLabel className="sr-only">Search</Ariakit.ComboboxLabel>
-			<Ariakit.Combobox {...props} />
+			<Ariakit.Combobox
+				{...props}
+				onKeyDown={(event) => {
+					if (event.key === "Enter") {
+						setOpen(false)
+					}
+				}}
+			/>
 			<Ariakit.ComboboxPopover
 				gutter={4}
 				className="bg-gray-900 border-gray-700 border rounded p-1 flex flex-col gap-1 min-w-64 empty:hidden"
@@ -392,7 +399,7 @@ function Button(props: ComponentProps<"button">) {
 	return (
 		<button
 			type="button"
-			className="bg-pink-600 hover:bg-pink-700 transition hover:scale-105 hover:shadow-md px-3 py-2 text-white rounded-lg active:duration-0 active:scale-95 active:bg-pink-500 shadow-black/25"
+			className="bg-pink-600 hover:bg-pink-700 transition hover:shadow-md px-3 py-1.5 text-white rounded-lg active:duration-0  active:bg-pink-500 active:translate-y-0.5 shadow-black/25"
 			{...props}
 		/>
 	)
