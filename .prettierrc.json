@@ -1,0 +1,10 @@
+{
+	"semi": false,
+	"useTabs": true,
+	"quoteProps": "consistent",
+	"objectWrap": "collapse",
+	"experimentalTernaries": true,
+	"experimentalOperatorPosition": "start",
+	"plugins": ["prettier-plugin-tailwindcss"],
+	"tailwindStylesheet": "./src/main.css"
+}
