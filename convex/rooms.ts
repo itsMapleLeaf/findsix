@@ -208,13 +208,12 @@ export const guessTags = mutation({
 		player.lastActiveTime = Date.now()
 
 		if (player.state === "playing") {
-			player.tagMatches = {
-				...player.tagMatches,
-				...Object.fromEntries(
-					args.tags
-						.filter((tag) => /^[a-z1-9][a-z1-9-_]*$/.test(tag))
-						.map((tag) => [tag, image.tags.includes(tag)]),
-				),
+			for (const tag of args.tags) {
+				// only use plain tags, avoiding negations and other modifiers
+				if (!/^[a-z1-9][a-z1-9-_]*$/.test(tag)) {
+					continue
+				}
+				player.tagMatches[tag] = image.tags.includes(tag)
 			}
 		}
 
