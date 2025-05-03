@@ -1,5 +1,6 @@
 import { Icon } from "@iconify/react"
 import type { ComponentProps, ReactElement } from "react"
+import { useFormStatus } from "react-dom"
 import { twMerge } from "tailwind-merge"
 import { LoadingSpinner } from "./LoadingSpinner.tsx"
 
@@ -8,7 +9,14 @@ type ButtonProps = ComponentProps<"button"> & {
 	pending?: boolean
 }
 
-export function Button({ icon, children, pending, ...props }: ButtonProps) {
+export function Button({
+	icon,
+	children,
+	pending: pendingProp,
+	...props
+}: ButtonProps) {
+	const formStatus = useFormStatus()
+	const pending = formStatus.pending || pendingProp
 	return (
 		<button
 			type="button"
