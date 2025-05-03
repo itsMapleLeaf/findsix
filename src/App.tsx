@@ -1,8 +1,8 @@
 import { ConvexProvider, ConvexReactClient } from "convex/react"
 import { Suspense } from "react"
 import { Route, Switch } from "wouter"
-import { CreateRoomPage } from "./CreateRoomPage.tsx"
-import { RoomPage } from "./RoomPage.tsx"
+import { CreateRoom } from "./CreateRoom.tsx"
+import { RoomPage } from "./Gameplay.tsx"
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL)
 
@@ -12,7 +12,7 @@ export default function App() {
 			<Suspense fallback={<p>pretend there's a pretty loading spinne here</p>}>
 				<Switch>
 					<Route path="/">
-						<CreateRoomPage />
+						<CreateRoom />
 					</Route>
 					<Route path="/play/:room">
 						{(params) => <RoomPage slug={params.room} />}

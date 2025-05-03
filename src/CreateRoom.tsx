@@ -4,7 +4,7 @@ import { navigate } from "wouter/use-browser-location"
 import { api } from "../convex/_generated/api"
 import { Button } from "./Button.tsx"
 
-export function CreateRoomPage() {
+export function CreateRoom() {
 	const createRoom = useMutation(api.rooms.create)
 	const [useAdultContent, setUseAdultContent] = useState(false)
 
