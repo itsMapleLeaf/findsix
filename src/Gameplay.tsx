@@ -198,8 +198,8 @@ export function RoomPage({ slug }: { slug: string }) {
 							domain={room.domain}
 							className="flex-1"
 						/>
-						<Button type="submit" disabled={searchPending}>
-							{searchPending ? "searching..." : "search"}
+						<Button type="submit" icon="mingcute:search-2-fill" pending={searchPending}>
+							Search
 						</Button>
 					</form>
 					<div className="flex gap-x-3 gap-y-1 flex-wrap">
