@@ -32,9 +32,7 @@ export function TagSearchInput({
 		void (async () => {
 			const res = await fetch(
 				`https://${domain}/tags/autocomplete.json?search%5Bname_matches%5D=${lastWord}&expiry=7`,
-				{
-					signal: controller.signal,
-				},
+				{ signal: controller.signal },
 			)
 			if (!res.ok) {
 				console.error("failed to fetch tags")
@@ -61,7 +59,7 @@ export function TagSearchInput({
 			<Ariakit.Combobox
 				{...props}
 				className={twMerge(
-					"bg-gray-900 text-white p-2 rounded border border-gray-800 focus:border-pink-700 focus:outline-none",
+					"rounded border border-gray-800 bg-gray-900 p-2 text-white focus:border-pink-700 focus:outline-none",
 					props.className,
 				)}
 				onKeyDown={(event) => {
@@ -72,24 +70,23 @@ export function TagSearchInput({
 			/>
 			<Ariakit.ComboboxPopover
 				gutter={4}
-				className="bg-gray-900 border-gray-700 border rounded p-1 flex flex-col gap-1 min-w-64 empty:hidden"
+				className="flex min-w-64 flex-col gap-1 rounded border border-gray-700 bg-gray-900 p-1 empty:hidden"
 			>
-				{input !== debouncedInput || /\s+$/.test(input)
-					? null
-					: tags.map((tag) => (
-							<Ariakit.ComboboxItem
-								key={tag.id}
-								value={
-									// when selected, this option will prefill the current input, the last tag autocompleted, then a space at the end for easily typing the next one
-									[...input.trim().split(/(\s+)/).slice(0, -1), tag.name].join(
-										"",
-									) + " "
-								}
-								className="px-2 py-1.5 hover:bg-gray-800 transition cursor-default data-focus-visible:bg-gray-800 rounded"
-							>
-								{tag.name}
-							</Ariakit.ComboboxItem>
-						))}
+				{input !== debouncedInput || /\s+$/.test(input) ? null : (
+					tags.map((tag) => (
+						<Ariakit.ComboboxItem
+							key={tag.id}
+							value={
+								// when selected, this option will prefill the current input, the last tag autocompleted, then a space at the end for easily typing the next one
+								[...input.trim().split(/(\s+)/).slice(0, -1), tag.name].join("")
+								+ " "
+							}
+							className="cursor-default rounded px-2 py-1.5 transition hover:bg-gray-800 data-focus-visible:bg-gray-800"
+						>
+							{tag.name}
+						</Ariakit.ComboboxItem>
+					))
+				)}
 			</Ariakit.ComboboxPopover>
 		</Ariakit.ComboboxProvider>
 	)

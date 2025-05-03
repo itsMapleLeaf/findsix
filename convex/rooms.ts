@@ -12,9 +12,7 @@ import {
 import { roomImageValidator } from "./schema.js"
 
 export const get = query({
-	args: {
-		slug: v.string(),
-	},
+	args: { slug: v.string() },
 	async handler(ctx, args) {
 		const room = await ctx.db
 			.query("rooms")
@@ -25,38 +23,26 @@ export const get = query({
 })
 
 export const getById = query({
-	args: {
-		roomId: v.id("rooms"),
-	},
+	args: { roomId: v.id("rooms") },
 	async handler(ctx, args) {
 		return await ctx.db.get(args.roomId)
 	},
 })
 
 export const create = mutation({
-	args: {
-		useAdultContent: v.optional(v.boolean()),
-	},
+	args: { useAdultContent: v.optional(v.boolean()) },
 	async handler(ctx, args) {
 		const slug = spaceSlug([adjective(), color(), animal()])
 		const domain = args.useAdultContent ? "e621.net" : "e926.net"
 
-		await ctx.db.insert("rooms", {
-			slug,
-			domain,
-			players: {},
-			image: null,
-		})
+		await ctx.db.insert("rooms", { slug, domain, players: {}, image: null })
 
 		return { slug }
 	},
 })
 
 export const join = mutation({
-	args: {
-		roomId: v.id("rooms"),
-		name: v.string(),
-	},
+	args: { roomId: v.id("rooms"), name: v.string() },
 	async handler(ctx, args) {
 		const room = await ctx.db.get(args.roomId)
 		if (!room) {
@@ -72,16 +58,12 @@ export const join = mutation({
 		})
 		player.lastActiveTime = Date.now()
 
-		await ctx.db.patch(args.roomId, {
-			players,
-		})
+		await ctx.db.patch(args.roomId, { players })
 	},
 })
 
 export const fetchNewImage = action({
-	args: {
-		roomId: v.id("rooms"),
-	},
+	args: { roomId: v.id("rooms") },
 	async handler(ctx, args) {
 		const room = await ctx.runQuery(api.rooms.getById, { roomId: args.roomId })
 		if (!room) {
@@ -91,9 +73,7 @@ export const fetchNewImage = action({
 		const PostsResponse = type({
 			posts: type({
 				id: type("number").pipe(String),
-				sample: {
-					url: "string",
-				},
+				sample: { url: "string" },
 				tags: `Record<string, string[]>`,
 			}).array(),
 		})
@@ -118,10 +98,7 @@ export const fetchNewImage = action({
 })
 
 export const setNextImage = internalMutation({
-	args: {
-		roomId: v.id("rooms"),
-		image: roomImageValidator,
-	},
+	args: { roomId: v.id("rooms"), image: roomImageValidator },
 	async handler(ctx, args) {
 		const room = await ctx.db.get(args.roomId)
 		if (!room) {
@@ -142,11 +119,7 @@ export const setNextImage = internalMutation({
 })
 
 export const guessImage = mutation({
-	args: {
-		roomId: v.id("rooms"),
-		name: v.string(),
-		imageId: v.string(),
-	},
+	args: { roomId: v.id("rooms"), name: v.string(), imageId: v.string() },
 	async handler(ctx, args) {
 		const room = await ctx.db.get(args.roomId)
 		if (!room) {
@@ -172,22 +145,14 @@ export const guessImage = mutation({
 			}
 		}
 
-		await ctx.db.patch(args.roomId, {
-			players,
-		})
+		await ctx.db.patch(args.roomId, { players })
 
-		return {
-			isCorrect: args.imageId === room.image?.id,
-		}
+		return { isCorrect: args.imageId === room.image?.id }
 	},
 })
 
 export const guessTags = mutation({
-	args: {
-		roomId: v.id("rooms"),
-		name: v.string(),
-		tags: v.array(v.string()),
-	},
+	args: { roomId: v.id("rooms"), name: v.string(), tags: v.array(v.string()) },
 	async handler(ctx, args) {
 		const room = await ctx.db.get(args.roomId)
 		if (!room) {
@@ -217,12 +182,8 @@ export const guessTags = mutation({
 			}
 		}
 
-		await ctx.db.patch(args.roomId, {
-			players,
-		})
+		await ctx.db.patch(args.roomId, { players })
 
-		return {
-			tagMatches: player.tagMatches,
-		}
+		return { tagMatches: player.tagMatches }
 	},
 })

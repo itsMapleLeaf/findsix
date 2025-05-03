@@ -9,7 +9,7 @@ export function CreateRoom() {
 	const [useAdultContent, setUseAdultContent] = useState(false)
 
 	return (
-		<div className="flex flex-col items-center justify-center min-h-dvh bg-gray-950 p-4 gap-4">
+		<div className="flex min-h-dvh flex-col items-center justify-center gap-4 bg-gray-950 p-4">
 			<h1 className="text-3xl font-light text-white">findsix</h1>
 
 			<Button
@@ -21,13 +21,13 @@ export function CreateRoom() {
 				create room
 			</Button>
 
-			<div className="flex items-center gap-2 mb-4">
+			<div className="mb-4 flex items-center gap-2">
 				<input
 					type="checkbox"
 					id="useAdultContent"
 					checked={useAdultContent}
 					onChange={(e) => setUseAdultContent(e.target.checked)}
-					className="size-4 peer accent-pink-300"
+					className="peer size-4 accent-pink-300"
 				/>
 				<label
 					htmlFor="useAdultContent"

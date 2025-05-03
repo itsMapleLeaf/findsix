@@ -16,7 +16,7 @@ export function NameInputForm({
 	}, [])
 
 	return (
-		<div className="flex flex-col items-center justify-center min-h-dvh bg-gray-950 p-4 gap-4">
+		<div className="flex min-h-dvh flex-col items-center justify-center gap-4 bg-gray-950 p-4">
 			<h1 className="text-3xl font-light text-white">findsix</h1>
 			<form
 				action={(fd) => {
@@ -28,7 +28,7 @@ export function NameInputForm({
 						console.error(error)
 					}
 				}}
-				className="flex flex-col gap-2 w-72"
+				className="flex w-72 flex-col gap-2"
 			>
 				<label htmlFor="playerName" className="text-white">
 					Enter your name
@@ -39,7 +39,7 @@ export function NameInputForm({
 					value={inputName}
 					onChange={(event) => setInputName(event.target.value)}
 					required
-					className="bg-gray-800 text-white p-2 rounded border border-gray-700 focus:border-pink-500 focus:outline-none"
+					className="rounded border border-gray-700 bg-gray-800 p-2 text-white focus:border-pink-500 focus:outline-none"
 					autoFocus
 				/>
 				<Button type="submit" disabled={!inputName.trim()}>
