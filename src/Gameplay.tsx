@@ -235,7 +235,7 @@ export function RoomPage({ slug }: { slug: string }) {
 									<img src={url} alt="" />
 								</button>
 								<a
-									href={`https://e926.net/posts/${post.id}`}
+									href={`https://${room.domain}/posts/${post.id}`}
 									target="_blank"
 									rel="noreferrer"
 									className="text-center p-1 w-full block"
